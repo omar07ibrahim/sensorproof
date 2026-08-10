@@ -195,11 +195,30 @@ def capture(output_root: Path, container_image: str) -> None:
         mobile = browser.new_page(viewport={"width": 390, "height": 844}, device_scale_factor=1)
         mobile.goto(report.as_uri(), wait_until="load")
         mobile.locator("h1").wait_for()
-        no_overflow = mobile.evaluate(
-            "document.documentElement.scrollWidth <= document.documentElement.clientWidth"
+        overflow = mobile.evaluate(
+            """() => ({
+                viewport: window.innerWidth,
+                scrollWidth: document.documentElement.scrollWidth,
+                offenders: Array.from(document.querySelectorAll("*"))
+                    .filter((element) => {
+                        const bounds = element.getBoundingClientRect();
+                        return bounds.right > window.innerWidth + 1 || bounds.left < -1;
+                    })
+                    .slice(0, 12)
+                    .map((element) => {
+                        const bounds = element.getBoundingClientRect();
+                        return {
+                            tag: element.tagName,
+                            className: String(element.className),
+                            left: Math.round(bounds.left),
+                            right: Math.round(bounds.right),
+                            width: Math.round(bounds.width),
+                        };
+                    }),
+            }))"""
         )
-        if not no_overflow:
-            raise ValueError("mobile report has horizontal overflow")
+        if overflow["scrollWidth"] > overflow["viewport"]:
+            raise ValueError(f"mobile report has horizontal overflow: {overflow}")
         mobile.screenshot(path=evidence / "sensorproof-report-mobile.png", animations="disabled")
         mobile.close()
 
