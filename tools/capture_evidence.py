@@ -215,7 +215,7 @@ def capture(output_root: Path, container_image: str) -> None:
                             width: Math.round(bounds.width),
                         };
                     }),
-            }))"""
+            })"""
         )
         if overflow["scrollWidth"] > overflow["viewport"]:
             raise ValueError(f"mobile report has horizontal overflow: {overflow}")
