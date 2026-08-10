@@ -1,6 +1,1 @@
-build==1.5.0
-hatchling==1.31.0
-mypy==2.3.0
-pytest==9.1.1
-pytest-cov==7.1.0
-ruff==0.16.2
+# Exact Python 3.14.6 quality and build toolchain.\n-r runtime.in\nbuild==1.5.0\nhatchling==1.31.0\nmypy==2.3.0\npytest==9.1.1\npytest-cov==7.1.0\nruff==0.16.2\n
