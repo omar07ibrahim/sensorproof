@@ -5,8 +5,8 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from pathlib import Path
 from collections.abc import Sequence
+from pathlib import Path
 
 from sensorproof import __version__
 from sensorproof.artifact import ArtifactError, load_artifact, write_artifact, write_text
