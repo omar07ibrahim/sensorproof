@@ -5,6 +5,7 @@ on:
     branches: [feature/portfolio-release]
     paths:
       - tools/capture_evidence.py
+      - src/sensorproof/report.py
       - .github/workflows/bootstrap-evidence.yml
 
 permissions:
