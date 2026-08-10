@@ -17,6 +17,8 @@ def test_report_is_offline_and_contains_verified_result(scenario: Scenario) -> N
     assert "<svg" in report
     assert "@media(max-width:760px)" in report
     assert "table-layout:fixed" in report
+    assert 'class="table-scroll"' in report
+    assert "overflow-x:auto" in report
     assert "th:nth-child(5)" in report
 
 

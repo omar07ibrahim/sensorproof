@@ -141,7 +141,8 @@ code{{font-family:ui-monospace,monospace;color:#cfe2f2}} .hash{{display:block;ov
 .kpi{{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}}
 .kpi strong{{display:block;font-size:30px;letter-spacing:-.03em}} .kpi span{{color:var(--muted);font-size:13px}}
 .good{{color:var(--green)}} .bad{{color:var(--red)}} figure{{margin:16px 0}} svg{{display:block;width:100%;height:auto}}
-table{{width:100%;border-collapse:collapse;background:var(--panel);border-radius:16px;overflow:hidden}}
+.table-scroll{{width:100%;max-width:100%;overflow-x:auto;border-radius:16px}}
+table{{width:100%;border-collapse:collapse;background:var(--panel)}}
 th,td{{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);font:13px ui-monospace,monospace}}
 th{{color:var(--muted)}} .status{{padding:3px 7px;border-radius:999px}} .rejected{{color:var(--red);background:#3a1d27}} .quarantined{{color:#c7d0da;background:#293543}}
 .callout{{border-left:3px solid var(--yellow);padding:4px 0 4px 18px}}
@@ -170,8 +171,8 @@ footer{{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:
 <figure>{innovation}</figure>
 <h2>Decision ledger</h2>
 <p class="callout">Every non-accepted measurement is shown below. The verifier independently rebuilds its residual, gate, health state, state transition, metric and SHA-256 certificate.</p>
-<table><thead><tr><th>step</th><th>sensor</th><th>decision</th><th>fault active</th><th>innovation</th><th>gate</th></tr></thead>
-<tbody>{rows}</tbody></table>
+<div class="table-scroll"><table><thead><tr><th>step</th><th>sensor</th><th>decision</th><th>fault active</th><th>innovation</th><th>gate</th></tr></thead>
+<tbody>{rows}</tbody></table></div>
 <h2>Reproduce</h2>
 <p><code>sensorproof run scenarios/urban-canyon.json --output run.json</code><br>
 <code>sensorproof verify run.json</code><br>
