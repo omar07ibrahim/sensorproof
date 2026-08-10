@@ -134,13 +134,13 @@
     "steps": 96
   },
   "scenario_sha256": "fc2530ebf9c3efb435be1dd3781293b920deb9c16fa3b1c5f45fa4ff4d869e62",
-  "source_revision": "f66a6e6fa7127ef696f51994f0a69ed08438c224",
-  "source_tree": "c1a2c47316b022b93fb47ca210932b74512b513e",
+  "source_revision": "799b2cabd2c72844de3fcda69776f491a9376f7d",
+  "source_tree": "6e9dfa9d03947e6386959fb5da27ee77af28d782",
   "sources": [
     {
       "bytes": 7561,
       "path": ".github/workflows/evidence.yml",
-      "sha256": "576c4c02ced399cd025cc1e1cd354499a145eb4e1484b1f99dc1aeada69de697"
+      "sha256": "2a40bfc6a7dcc4121962cdf93e798d3b1c13aeefeb05ecb800f98b851924f6ee"
     },
     {
       "bytes": 1780,
@@ -153,9 +153,9 @@
       "sha256": "1ba302dec7680863dcc3340ea8a129413c738c66b7f8bb0a4d95421bcf9e4c0f"
     },
     {
-      "bytes": 693,
+      "bytes": 7250,
       "path": "requirements/evidence-browser.txt",
-      "sha256": "bdf23c0da87e7bd3d2e2a1b8a6df6b2dff1269fafc605eabf452ea26288941ea"
+      "sha256": "6aa5ee3942f6dc461d35c87a3853c29a5c2a3f86bdb9fe5688bc042fe6cfc782"
     },
     {
       "bytes": 55,
