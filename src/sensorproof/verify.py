@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from sensorproof import __version__
 from sensorproof.artifact import ArtifactError
@@ -85,8 +85,9 @@ def _replay(
     *,
     robust: bool,
 ) -> None:
-    trace = run.get("trace")
-    _require(isinstance(trace, list), "run.trace must be an array")
+    trace_value = run.get("trace")
+    _require(isinstance(trace_value, list), "run.trace must be an array")
+    trace = cast(list[dict[str, Any]], trace_value)
     _require(len(trace) == scenario.steps, "trace length does not match scenario")
     state = list(scenario.initial_state)
     sensors = {sensor.sensor_id: sensor for sensor in scenario.sensors}
@@ -97,11 +98,20 @@ def _replay(
         state[0] += round_div(state[2] * scenario.dt_ms, 1_000)
         state[1] += round_div(state[3] * scenario.dt_ms, 1_000)
         _require(logged.get("predicted") == state, f"prediction mismatch at step {step}")
-        decisions = logged.get("decisions")
-        frame_observations = frame.get("observations")
-        _require(isinstance(decisions, list), f"decisions must be an array at step {step}")
+        decisions_value = logged.get("decisions")
+        frame_observations_value = frame.get("observations")
         _require(
-            isinstance(frame_observations, list) and len(decisions) == len(frame_observations),
+            isinstance(decisions_value, list),
+            f"decisions must be an array at step {step}",
+        )
+        _require(
+            isinstance(frame_observations_value, list),
+            f"observations must be an array at step {step}",
+        )
+        decisions = cast(list[dict[str, Any]], decisions_value)
+        frame_observations = cast(list[dict[str, Any]], frame_observations_value)
+        _require(
+            len(decisions) == len(frame_observations),
             f"decision count mismatch at step {step}",
         )
         for observation, decision in zip(frame_observations, decisions, strict=True):
@@ -177,11 +187,12 @@ def _replay(
                 f"cooldown mismatch at step {step}",
             )
         _require(logged.get("estimate") == state, f"estimate mismatch at step {step}")
-        truth = frame.get("truth")
+        truth_value = frame.get("truth")
         _require(
-            isinstance(truth, list) and len(truth) == 4,
+            isinstance(truth_value, list) and len(truth_value) == 4,
             f"invalid truth state at step {step}",
         )
+        truth = cast(list[int], truth_value)
         expected_error = [state[0] - truth[0], state[1] - truth[1]]
         _require(
             logged.get("position_error") == expected_error,

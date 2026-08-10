@@ -151,9 +151,11 @@ def parse_scenario_bytes(raw: bytes) -> Scenario:
     initial = _mapping(root["initial_state"], "initial_state")
     initial_keys = {"x_mm", "y_mm", "vx_mm_s", "vy_mm_s"}
     _exact_keys(initial, initial_keys, "initial_state")
-    initial_state = tuple(
-        _integer(initial[key], f"initial_state.{key}", -(10**9), 10**9)
-        for key in ("x_mm", "y_mm", "vx_mm_s", "vy_mm_s")
+    initial_state = (
+        _integer(initial["x_mm"], "initial_state.x_mm", -(10**9), 10**9),
+        _integer(initial["y_mm"], "initial_state.y_mm", -(10**9), 10**9),
+        _integer(initial["vx_mm_s"], "initial_state.vx_mm_s", -(10**9), 10**9),
+        _integer(initial["vy_mm_s"], "initial_state.vy_mm_s", -(10**9), 10**9),
     )
 
     motion_items = _list(root["motion"], "motion")
