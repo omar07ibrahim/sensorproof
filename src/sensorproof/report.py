@@ -146,7 +146,7 @@ th,td{{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);fon
 th{{color:var(--muted)}} .status{{padding:3px 7px;border-radius:999px}} .rejected{{color:var(--red);background:#3a1d27}} .quarantined{{color:#c7d0da;background:#293543}}
 .callout{{border-left:3px solid var(--yellow);padding:4px 0 4px 18px}}
 footer{{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}}
-@media(max-width:760px){{main{{width:min(100% - 20px,1120px);padding-top:36px}}.hero{{grid-template-columns:1fr}}.grid{{grid-template-columns:1fr 1fr}}h2{{font-size:24px}}th,td{{padding:8px 7px;font-size:11px}}}}
+@media(max-width:760px){{main{{width:min(100% - 20px,1120px);padding-top:36px}}.hero{{grid-template-columns:1fr}}.grid{{grid-template-columns:1fr 1fr}}h2{{font-size:24px}}table{{table-layout:fixed}}th,td{{padding:8px 7px;font-size:11px;overflow-wrap:anywhere}}th:nth-child(5),td:nth-child(5),th:nth-child(6),td:nth-child(6){{display:none}}}}
 </style>
 </head>
 <body><main>

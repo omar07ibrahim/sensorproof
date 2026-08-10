@@ -16,6 +16,8 @@ def test_report_is_offline_and_contains_verified_result(scenario: Scenario) -> N
     assert "https://" not in report
     assert "<svg" in report
     assert "@media(max-width:760px)" in report
+    assert "table-layout:fixed" in report
+    assert "th:nth-child(5)" in report
 
 
 def test_report_lists_rejections(scenario: Scenario) -> None:

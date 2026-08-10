@@ -128,7 +128,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
-def prepare(root: Path, artifact_path: Path, report_path: Path, cli_path: Path, output_root: Path) -> None:
+def prepare(
+    root: Path, artifact_path: Path, report_path: Path, cli_path: Path, output_root: Path
+) -> None:
     root = root.resolve()
     if output_root.exists():
         raise ValueError("evidence output root already exists")
@@ -248,7 +250,9 @@ def finalize(
     evidence = output_root / EVIDENCE_DIRECTORY
     actual = {path.name for path in evidence.iterdir() if path.is_file()}
     if actual != EXPECTED_FILES:
-        raise ValueError(f"evidence files differ before finalization: {sorted(actual ^ EXPECTED_FILES)}")
+        raise ValueError(
+            f"evidence files differ before finalization: {sorted(actual ^ EXPECTED_FILES)}"
+        )
 
     from sensorproof.artifact import load_artifact
     from sensorproof.verify import verify_artifact
@@ -379,7 +383,9 @@ def verify_visuals(output_root: Path) -> None:
     for name, dimensions in expected_png.items():
         with Image.open(evidence / name) as image:
             if image.format != "PNG" or image.size != dimensions:
-                raise ValueError(f"unexpected raster contract for {name}: {image.format} {image.size}")
+                raise ValueError(
+                    f"unexpected raster contract for {name}: {image.format} {image.size}"
+                )
             _reject_blank_image(image, name)
     with Image.open(evidence / "sensorproof-report-full.png") as image:
         if image.format != "PNG" or image.width != 1440 or image.height < 2_000:
@@ -431,12 +437,12 @@ def _trajectory_svg(artifact: dict[str, Any]) -> str:
 <rect width="{width}" height="{height}" rx="28" fill="#071019"/>
 <text x="{pad}" y="55" fill="#eaf2f8" font-family="system-ui,sans-serif" font-size="28" font-weight="700">Same observations. Different fault policy.</text>
 <text x="{pad}" y="88" fill="#9eb0c2" font-family="ui-monospace,monospace" font-size="16">fault-aware RMSE {robust_rmse} mm · ungated baseline {baseline_rmse} mm</text>
-<path d="M {pad} {height-pad} H {width-pad} M {pad} 118 V {height-pad}" stroke="#294158"/>
+<path d="M {pad} {height - pad} H {width - pad} M {pad} 118 V {height - pad}" stroke="#294158"/>
 <polyline points="{points(baseline)}" fill="none" stroke="#ff6b6b" stroke-width="5" opacity=".82"/>
 <polyline points="{points(robust)}" fill="none" stroke="#52d6a6" stroke-width="6"/>
 <polyline points="{points(truth)}" fill="none" stroke="#f4d35e" stroke-width="3" stroke-dasharray="10 8"/>
 <g font-family="ui-monospace,monospace" font-size="16"><text x="760" y="55" fill="#f4d35e">truth</text><text x="840" y="55" fill="#52d6a6">SensorProof</text><text x="980" y="55" fill="#ff6b6b">baseline</text></g>
-<text x="{pad}" y="{height-24}" fill="#73879b" font-family="ui-monospace,monospace" font-size="13">coordinates: integer millimetres · 96 deterministic steps · seed 20260810</text>
+<text x="{pad}" y="{height - 24}" fill="#73879b" font-family="ui-monospace,monospace" font-size="13">coordinates: integer millimetres · 96 deterministic steps · seed 20260810</text>
 </svg>
 """
 
@@ -460,7 +466,7 @@ def _fault_svg(artifact: dict[str, Any]) -> str:
             decision["status"]
         ]
         bars.append(
-            f'<rect x="{x:.1f}" y="{height-pad-bar_height:.1f}" width="{bar_width:.1f}" '
+            f'<rect x="{x:.1f}" y="{height - pad - bar_height:.1f}" width="{bar_width:.1f}" '
             f'height="{bar_height:.1f}" rx="1" fill="{color}"/>'
         )
     gate_score = decisions[0]["gate_score_milli"]
@@ -476,10 +482,10 @@ def _fault_svg(artifact: dict[str, Any]) -> str:
 <rect width="{width}" height="{height}" rx="28" fill="#071019"/>
 <text x="{pad}" y="54" fill="#eaf2f8" font-family="system-ui,sans-serif" font-size="28" font-weight="700">The fault is visible in the decision ledger.</text>
 <text x="{pad}" y="88" fill="#9eb0c2" font-family="ui-monospace,monospace" font-size="16">{isolated} fault observations isolated · 0 healthy observations rejected</text>
-<rect x="{fault_x:.1f}" y="120" width="{fault_width:.1f}" height="{height-pad-120}" fill="#ff6b6b" opacity=".08"/>
-{''.join(bars)}
-<line x1="{pad}" y1="{gate_y:.1f}" x2="{width-pad}" y2="{gate_y:.1f}" stroke="#f4d35e" stroke-width="3" stroke-dasharray="9 7"/>
-<g font-family="ui-monospace,monospace" font-size="14"><text x="{pad}" y="{height-26}" fill="#73879b">step 0</text><text x="{width-pad-62}" y="{height-26}" fill="#73879b">step 95</text><text x="{fault_x+10:.1f}" y="144" fill="#ff9b9b">injected bias-step · steps {fault_start}–{fault_end-1}</text></g>
+<rect x="{fault_x:.1f}" y="120" width="{fault_width:.1f}" height="{height - pad - 120}" fill="#ff6b6b" opacity=".08"/>
+{"".join(bars)}
+<line x1="{pad}" y1="{gate_y:.1f}" x2="{width - pad}" y2="{gate_y:.1f}" stroke="#f4d35e" stroke-width="3" stroke-dasharray="9 7"/>
+<g font-family="ui-monospace,monospace" font-size="14"><text x="{pad}" y="{height - 26}" fill="#73879b">step 0</text><text x="{width - pad - 62}" y="{height - 26}" fill="#73879b">step 95</text><text x="{fault_x + 10:.1f}" y="144" fill="#ff9b9b">injected bias-step · steps {fault_start}–{fault_end - 1}</text></g>
 </svg>
 """
 
@@ -514,9 +520,9 @@ def _certificate_svg(artifact: dict[str, Any]) -> str:
     for index, (label, digest) in enumerate(values):
         y = 175 + index * 105
         rows.append(
-            f'<rect x="100" y="{y-42}" width="1000" height="78" rx="16" fill="#101e2c" stroke="#294158"/>'
-            f'<text x="135" y="{y-5}" fill="#eaf2f8" font-family="system-ui,sans-serif" font-size="20" font-weight="700">{html.escape(label)}</text>'
-            f'<text x="330" y="{y-5}" fill="#52d6a6" font-family="ui-monospace,monospace" font-size="16">sha256:{digest}</text>'
+            f'<rect x="100" y="{y - 42}" width="1000" height="78" rx="16" fill="#101e2c" stroke="#294158"/>'
+            f'<text x="135" y="{y - 5}" fill="#eaf2f8" font-family="system-ui,sans-serif" font-size="20" font-weight="700">{html.escape(label)}</text>'
+            f'<text x="330" y="{y - 5}" fill="#52d6a6" font-family="ui-monospace,monospace" font-size="16">sha256:{digest}</text>'
         )
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title description">
 <title id="title">SensorProof certificate chain</title>
@@ -524,7 +530,7 @@ def _certificate_svg(artifact: dict[str, Any]) -> str:
 <rect width="1200" height="680" rx="28" fill="#071019"/>
 <text x="100" y="70" fill="#eaf2f8" font-family="system-ui,sans-serif" font-size="30" font-weight="700">The screenshot is not the source of truth.</text>
 <text x="100" y="105" fill="#9eb0c2" font-family="ui-monospace,monospace" font-size="15">canonical JSON → trace digests → payload certificate → independent replay</text>
-{''.join(rows)}
+{"".join(rows)}
 <text x="100" y="630" fill="#f4d35e" font-family="ui-monospace,monospace" font-size="14">Any changed observation, decision, state, metric, or digest fails verification.</text>
 </svg>
 """
