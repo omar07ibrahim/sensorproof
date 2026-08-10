@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use SensorProof in a publication, cite this software release."
+title: "SensorProof: replayable fault-aware sensor fusion evidence"
+type: software
+authors:
+  - family-names: Ibrahim
+    given-names: Omar
+repository-code: "https://github.com/omar07ibrahim/sensorproof"
+url: "https://github.com/omar07ibrahim/sensorproof"
+license: Apache-2.0
+version: 0.1.0
+date-released: 2026-08-10
+keywords:
+  - robotics
+  - sensor fusion
+  - fault isolation
+  - state estimation
+  - reproducibility

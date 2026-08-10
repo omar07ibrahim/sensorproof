@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a reproducible SensorProof defect using synthetic data.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include credentials, private routes, personal data, or undisclosed vulnerabilities. Use private vulnerability reporting for security issues.
+  - type: input
+    id: version
+    attributes:
+      label: SensorProof version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: command
+    attributes:
+      label: Affected surface
+      options:
+        - run
+        - verify
+        - inspect
+        - report
+        - evidence workflow
+        - packaging or installation
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal synthetic reproduction
+      description: Include the command, bounded synthetic input, and exact output.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, architecture, and exact Python version.
+    validations:
+      required: true
