@@ -494,13 +494,15 @@ def _fault_svg(artifact: dict[str, Any]) -> str:
     fault_end = artifact["scenario"]["faults"][0]["end"]
     fault_x = pad + fault_start * chart_width / len(decisions)
     fault_width = (fault_end - fault_start) * chart_width / len(decisions)
-    isolated = artifact["runs"]["robust"]["summary"]["isolated_fault_observations"]
+    summary = artifact["runs"]["robust"]["summary"]
+    isolated = summary["isolated_fault_observations"]
+    healthy = summary["healthy_rejections"]
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">GNSS innovation and isolation timeline</title>
 <desc id="description">Actual normalized fixed-point innovations and gate decisions for every GNSS observation.</desc>
 <rect width="{width}" height="{height}" rx="28" fill="#071019"/>
 <text x="{pad}" y="54" fill="#eaf2f8" font-family="system-ui,sans-serif" font-size="28" font-weight="700">The fault is visible in the decision ledger.</text>
-<text x="{pad}" y="88" fill="#9eb0c2" font-family="ui-monospace,monospace" font-size="16">{isolated} fault observations isolated · 0 healthy observations rejected</text>
+<text x="{pad}" y="88" fill="#9eb0c2" font-family="ui-monospace,monospace" font-size="16">{isolated} fault observations isolated · {healthy} healthy observations rejected</text>
 <rect x="{fault_x:.1f}" y="120" width="{fault_width:.1f}" height="{height - pad - 120}" fill="#ff6b6b" opacity=".08"/>
 {"".join(bars)}
 <line x1="{pad}" y1="{gate_y:.1f}" x2="{width - pad}" y2="{gate_y:.1f}" stroke="#f4d35e" stroke-width="3" stroke-dasharray="9 7"/>

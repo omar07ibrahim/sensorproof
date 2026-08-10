@@ -1,0 +1,87 @@
+name: Bootstrap SensorProof evidence
+
+on:
+  push:
+    branches: [feature/portfolio-release]
+    paths:
+      - tools/capture_evidence.py
+      - src/sensorproof/report.py
+      - .github/workflows/bootstrap-evidence.yml
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      CONTAINER_IMAGE: mcr.microsoft.com/playwright/python@sha256:51d31fdfacb0cff99a1a724152e34ae408d2bd4e7da310ff157450f49261cc59
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.14.6"
+      - name: Build deterministic evidence inputs
+        run: |
+          set -euo pipefail
+          python -m pip install --no-deps --require-hashes -r requirements/quality.txt
+          python -m pip install --no-build-isolation --no-deps .
+          SOURCE_REVISION="$(git log -1 --format=%H -- .github/workflows/evidence.yml pyproject.toml requirements/evidence-browser-image.lock.json requirements/evidence-browser.txt requirements/runtime.in requirements/runtime.txt scenarios src tools/capture_evidence.py)"
+          SOURCE_TREE="$(git rev-parse "$SOURCE_REVISION^{tree}")"
+          echo "SOURCE_REVISION=$SOURCE_REVISION" >>"$GITHUB_ENV"
+          echo "SOURCE_TREE=$SOURCE_TREE" >>"$GITHUB_ENV"
+          input="$RUNNER_TEMP/sensorproof-input"
+          mkdir -m 700 "$input"
+          cp scenarios/urban-canyon.json "$input/scenario.json"
+          (
+            cd "$input"
+            {
+              echo '$ sensorproof run scenario.json --output run.json'
+              sensorproof run scenario.json --output run.json
+              echo
+              echo '$ sensorproof verify run.json'
+              sensorproof verify run.json
+              echo
+              echo '$ sensorproof report run.json --output report.html'
+              sensorproof report run.json --output report.html
+            } >sensorproof-cli.txt
+          )
+          python tools/capture_evidence.py prepare --root "$GITHUB_WORKSPACE" --artifact "$input/run.json" --report "$input/report.html" --cli "$input/sensorproof-cli.txt" --output-root "$RUNNER_TEMP/sensorproof-evidence"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v6.2.0
+        with:
+          python-version: "3.12.3"
+      - name: Capture with pinned networkless browser
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/evidence-wheelhouse"
+          python -m pip download --require-hashes --only-binary=:all: --dest "$RUNNER_TEMP/evidence-wheelhouse" -r requirements/evidence-browser.txt
+          docker pull --platform linux/amd64 "$CONTAINER_IMAGE"
+          docker run --rm --platform linux/amd64 --pull=never --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges --pids-limit=512 --memory=4g --cpus=2 --shm-size=1g --tmpfs /tmp:rw,exec,nosuid,nodev,size=2147483648 --user "$(id -u):$(id -g)" --env HOME=/tmp/home --env PYTHONNOUSERSITE=1 --env PYTHONPATH=/tmp/evidence-python --volume "$GITHUB_WORKSPACE:/src:ro" --volume "$RUNNER_TEMP/evidence-wheelhouse:/wheelhouse:ro" --volume "$RUNNER_TEMP:/out:rw" --entrypoint bash "$CONTAINER_IMAGE" -euo pipefail -c '
+            mkdir -p "$HOME" /tmp/evidence-python
+            python -m pip install --no-index --find-links=/wheelhouse --target=/tmp/evidence-python Pillow==12.3.0 playwright==1.62.0
+            python /src/tools/capture_evidence.py capture --output-root /out/sensorproof-evidence --container-image "'"$CONTAINER_IMAGE"'"
+            python /src/tools/capture_evidence.py verify-visuals --output-root /out/sensorproof-evidence
+          '
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.14.6"
+      - name: Bind, verify, and commit evidence
+        run: |
+          set -euo pipefail
+          candidate="$RUNNER_TEMP/sensorproof-evidence"
+          python tools/capture_evidence.py finalize --root "$GITHUB_WORKSPACE" --output-root "$candidate" --source-revision "$SOURCE_REVISION" --source-tree "$SOURCE_TREE" --container-image "$CONTAINER_IMAGE" --browser "Chromium 151.0.7922.34" --playwright "1.62.0" --pillow "12.3.0"
+          python tools/capture_evidence.py verify --root "$GITHUB_WORKSPACE" --output-root "$candidate" --source-revision "$SOURCE_REVISION" --source-tree "$SOURCE_TREE" --container-image "$CONTAINER_IMAGE"
+          test -d docs/evidence
+          find docs/evidence -mindepth 1 -maxdepth 1 -type f -delete
+          rmdir docs/evidence
+          cp -R "$candidate/docs/evidence" docs/evidence
+          rm .github/workflows/bootstrap-evidence.yml
+          git add docs/evidence .github/workflows/bootstrap-evidence.yml
+          git config user.name "Omar Ibrahim"
+          git config user.email "31526072+omar07ibrahim@users.noreply.github.com"
+          git commit --author="Omar Ibrahim <31526072+omar07ibrahim@users.noreply.github.com>" -m "docs: capture reproducible SensorProof evidence"
+          git push origin HEAD:feature/portfolio-release
