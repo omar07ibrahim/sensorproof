@@ -90,10 +90,7 @@ def _replay(
     _require(len(trace) == scenario.steps, "trace length does not match scenario")
     state = list(scenario.initial_state)
     sensors = {sensor.sensor_id: sensor for sensor in scenario.sensors}
-    health = {
-        sensor.sensor_id: {"reject_streak": 0, "cooldown": 0}
-        for sensor in scenario.sensors
-    }
+    health = {sensor.sensor_id: {"reject_streak": 0, "cooldown": 0} for sensor in scenario.sensors}
 
     for step, (frame, logged) in enumerate(zip(observations, trace, strict=True)):
         _require(logged.get("step") == step, f"trace step mismatch at {step}")
@@ -146,8 +143,7 @@ def _replay(
                 f"gate mismatch at step {step}",
             )
             _require(
-                decision.get("gate_score_milli")
-                == round_div(gate_limit_sq * 1_000, denominator),
+                decision.get("gate_score_milli") == round_div(gate_limit_sq * 1_000, denominator),
                 f"gate score mismatch at step {step}",
             )
 

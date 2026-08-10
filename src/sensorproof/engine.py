@@ -66,10 +66,7 @@ def run_filter(
 ) -> dict[str, Any]:
     """Run the same estimator with or without innovation gating."""
     state = list(scenario.initial_state)
-    health = {
-        sensor.sensor_id: {"reject_streak": 0, "cooldown": 0}
-        for sensor in scenario.sensors
-    }
+    health = {sensor.sensor_id: {"reject_streak": 0, "cooldown": 0} for sensor in scenario.sensors}
     sensors = {sensor.sensor_id: sensor for sensor in scenario.sensors}
     trace: list[dict[str, Any]] = []
 
@@ -81,9 +78,7 @@ def run_filter(
             sensor = sensors[observation["sensor"]]
             indexes = (0, 1) if sensor.kind == "position" else (2, 3)
             before = state.copy()
-            residual = [
-                observation["values"][axis] - state[indexes[axis]] for axis in range(2)
-            ]
+            residual = [observation["values"][axis] - state[indexes[axis]] for axis in range(2)]
             residual_sq = sum(value * value for value in residual)
             gate_radius = round_div(sensor.noise_units * sensor.gate_sigma_milli, 1_000)
             gate_limit_sq = 2 * gate_radius * gate_radius

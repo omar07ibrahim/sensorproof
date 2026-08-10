@@ -56,10 +56,11 @@ def _trajectory(artifact: dict[str, Any]) -> str:
 def _innovation(artifact: dict[str, Any], sensor_id: str) -> str:
     trace = artifact["runs"]["robust"]["trace"]
     decisions = [
-        next(item for item in frame["decisions"] if item["sensor"] == sensor_id)
-        for frame in trace
+        next(item for item in frame["decisions"] if item["sensor"] == sensor_id) for frame in trace
     ]
-    maximum = max(max(item["innovation_score_milli"], item["gate_score_milli"]) for item in decisions)
+    maximum = max(
+        max(item["innovation_score_milli"], item["gate_score_milli"]) for item in decisions
+    )
     chart_width = _WIDTH - 2 * _PAD
     chart_height = 238
     bars: list[str] = []
@@ -81,7 +82,7 @@ def _innovation(artifact: dict[str, Any], sensor_id: str) -> str:
     gate_y = _HEIGHT - _PAD - gate
     return f"""<svg viewBox="0 0 {_WIDTH} {_HEIGHT}" role="img" aria-label="{escape(sensor_id)} innovation gate decisions">
   <rect width="{_WIDTH}" height="{_HEIGHT}" rx="18" fill="#09131f"/>
-  {''.join(bars)}
+  {"".join(bars)}
   <line x1="{_PAD}" y1="{gate_y:.1f}" x2="{_WIDTH - _PAD}" y2="{gate_y:.1f}" stroke="#f4d35e" stroke-width="2" stroke-dasharray="7 5"/>
   <text x="{_PAD}" y="28" fill="#c9d7e5" font-family="ui-monospace,monospace" font-size="14">{escape(sensor_id)} normalized innovation · yellow = configured gate</text>
   <text x="{_PAD}" y="{_HEIGHT - 14}" fill="#7f8ea3" font-family="ui-monospace,monospace" font-size="12">green accepted · red rejected · gray quarantined · step 0 → {len(decisions) - 1}</text>
@@ -98,7 +99,7 @@ def _decision_rows(artifact: dict[str, Any]) -> str:
                 "<tr>"
                 f"<td>{frame['step']}</td>"
                 f"<td>{escape(decision['sensor'])}</td>"
-                f"<td><span class=\"status {decision['status']}\">{decision['status']}</span></td>"
+                f'<td><span class="status {decision["status"]}">{decision["status"]}</span></td>'
                 f"<td>{str(decision['fault_active']).lower()}</td>"
                 f"<td>{decision['innovation_score_milli'] / 1000:.3f}</td>"
                 f"<td>{decision['gate_score_milli'] / 1000:.3f}</td>"
@@ -115,9 +116,7 @@ def build_report(artifact: dict[str, Any]) -> str:
     baseline = artifact["runs"]["baseline"]["summary"]
     comparison = artifact["comparison"]
     reduction = comparison["rmse_reduction_basis_points"] / 100
-    sensor_id = next(
-        fault["sensor"] for fault in scenario["faults"] if fault["sensor"]
-    )
+    sensor_id = next(fault["sensor"] for fault in scenario["faults"] if fault["sensor"])
     certificate = artifact["certificate"]["payload_sha256"]
     trajectory = _trajectory(artifact)
     innovation = _innovation(artifact, sensor_id)
@@ -127,7 +126,7 @@ def build_report(artifact: dict[str, Any]) -> str:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SensorProof · {escape(scenario['name'])}</title>
+<title>SensorProof · {escape(scenario["name"])}</title>
 <style>
 :root{{--ink:#eaf2f8;--muted:#9eb0c2;--panel:#101e2c;--line:#294158;--green:#52d6a6;--red:#ff6b6b;--yellow:#f4d35e}}
 *{{box-sizing:border-box}} body{{margin:0;background:#071019;color:var(--ink);font:16px/1.55 Inter,ui-sans-serif,system-ui,sans-serif}}
@@ -158,10 +157,10 @@ footer{{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:
 <div class="certificate"><div class="eyebrow">Replay certificate</div><code class="hash">sha256:{certificate}</code></div>
 </section>
 <section class="grid">
-<div class="kpi"><strong class="good">{robust['position_rmse_mm']} mm</strong><span>fault-aware RMSE</span></div>
-<div class="kpi"><strong class="bad">{baseline['position_rmse_mm']} mm</strong><span>ungated baseline RMSE</span></div>
+<div class="kpi"><strong class="good">{robust["position_rmse_mm"]} mm</strong><span>fault-aware RMSE</span></div>
+<div class="kpi"><strong class="bad">{baseline["position_rmse_mm"]} mm</strong><span>ungated baseline RMSE</span></div>
 <div class="kpi"><strong>{reduction:.2f}%</strong><span>RMSE reduction</span></div>
-<div class="kpi"><strong>{robust['isolated_fault_observations']}</strong><span>fault observations isolated</span></div>
+<div class="kpi"><strong>{robust["isolated_fault_observations"]}</strong><span>fault observations isolated</span></div>
 </section>
 <h2>Trajectory under an urban-canyon bias</h2>
 <p>The comparison changes one thing: innovation gating and cooldown are enabled for the robust run and disabled for the baseline. Motion, observations, update gains and ordering are byte-identical.</p>
@@ -177,6 +176,6 @@ footer{{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:
 <p><code>sensorproof run scenarios/urban-canyon.json --output run.json</code><br>
 <code>sensorproof verify run.json</code><br>
 <code>sensorproof report run.json --output report.html</code></p>
-<footer>SensorProof {escape(artifact['engine_version'])} · scenario digest {escape(artifact['scenario_sha256'])} · self-contained offline report</footer>
+<footer>SensorProof {escape(artifact["engine_version"])} · scenario digest {escape(artifact["scenario_sha256"])} · self-contained offline report</footer>
 </main></body></html>
 """

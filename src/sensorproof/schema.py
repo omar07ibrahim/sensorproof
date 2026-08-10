@@ -152,7 +152,7 @@ def parse_scenario_bytes(raw: bytes) -> Scenario:
     initial_keys = {"x_mm", "y_mm", "vx_mm_s", "vy_mm_s"}
     _exact_keys(initial, initial_keys, "initial_state")
     initial_state = tuple(
-        _integer(initial[key], f"initial_state.{key}", -10**9, 10**9)
+        _integer(initial[key], f"initial_state.{key}", -(10**9), 10**9)
         for key in ("x_mm", "y_mm", "vx_mm_s", "vy_mm_s")
     )
 
@@ -246,8 +246,8 @@ def parse_scenario_bytes(raw: bytes) -> Scenario:
                 start,
                 end,
                 fault_type,
-                _integer(value["bias_x"], f"faults[{index}].bias_x", -10**9, 10**9),
-                _integer(value["bias_y"], f"faults[{index}].bias_y", -10**9, 10**9),
+                _integer(value["bias_x"], f"faults[{index}].bias_x", -(10**9), 10**9),
+                _integer(value["bias_y"], f"faults[{index}].bias_y", -(10**9), 10**9),
             )
         )
     return Scenario(
