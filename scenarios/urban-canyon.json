@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "name": "Urban canyon GNSS bias",
+  "seed": 20260810,
+  "dt_ms": 1000,
+  "steps": 96,
+  "initial_state": {
+    "x_mm": 0,
+    "y_mm": 0,
+    "vx_mm_s": 0,
+    "vy_mm_s": 0
+  },
+  "motion": [
+    {
+      "start": 0,
+      "end": 20,
+      "ax_mm_s2": 180,
+      "ay_mm_s2": 60
+    },
+    {
+      "start": 20,
+      "end": 48,
+      "ax_mm_s2": 0,
+      "ay_mm_s2": 0
+    },
+    {
+      "start": 48,
+      "end": 68,
+      "ax_mm_s2": -120,
+      "ay_mm_s2": 80
+    },
+    {
+      "start": 68,
+      "end": 96,
+      "ax_mm_s2": 0,
+      "ay_mm_s2": -70
+    }
+  ],
+  "sensors": [
+    {
+      "id": "wheel",
+      "kind": "velocity",
+      "noise_units": 120,
+      "gate_sigma_milli": 5000,
+      "alpha_milli": 650,
+      "beta_milli": 0
+    },
+    {
+      "id": "vio",
+      "kind": "position",
+      "noise_units": 300,
+      "gate_sigma_milli": 4500,
+      "alpha_milli": 450,
+      "beta_milli": 90
+    },
+    {
+      "id": "gnss",
+      "kind": "position",
+      "noise_units": 700,
+      "gate_sigma_milli": 4500,
+      "alpha_milli": 550,
+      "beta_milli": 70
+    }
+  ],
+  "faults": [
+    {
+      "sensor": "gnss",
+      "start": 34,
+      "end": 72,
+      "type": "bias_ramp",
+      "bias_x": 16000,
+      "bias_y": -11000
+    }
+  ]
+}
