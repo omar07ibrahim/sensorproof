@@ -1,0 +1,169 @@
+name: SensorProof evidence
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sensorproof-evidence-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evidence:
+    name: Visual evidence drift (Chromium 151)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      CONTAINER_IMAGE: mcr.microsoft.com/playwright/python@sha256:51d31fdfacb0cff99a1a724152e34ae408d2bd4e7da310ff157450f49261cc59
+    steps:
+      - name: Check out exact revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Set up exact experiment runtime
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.14.6"
+      - name: Install locked application environment
+        run: |
+          set -euo pipefail
+          test "$(python --version)" = "Python 3.14.6"
+          python -m pip install --no-deps --require-hashes -r requirements/quality.txt
+          python -m pip install --no-build-isolation --no-deps .
+      - name: Derive source-bound evidence revision
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          SOURCE_REVISION="$(git log -1 --format=%H -- .github/workflows/evidence.yml pyproject.toml requirements/evidence-browser-image.lock.json requirements/evidence-browser.txt requirements/runtime.in requirements/runtime.txt scenarios src tools/capture_evidence.py)"
+          SOURCE_TREE="$(git rev-parse "$SOURCE_REVISION^{tree}")"
+          for value in "$SOURCE_REVISION" "$SOURCE_TREE"; do
+            test "$(printf '%s' "$value" | wc -c)" -eq 40
+            case "$value" in *[!0-9a-f]*) exit 1;; esac
+          done
+          echo "SOURCE_REVISION=$SOURCE_REVISION" >>"$GITHUB_ENV"
+          echo "SOURCE_TREE=$SOURCE_TREE" >>"$GITHUB_ENV"
+      - name: Build real artifact, CLI, and report inputs
+        run: |
+          set -euo pipefail
+          input="$RUNNER_TEMP/sensorproof-input"
+          mkdir -m 700 "$input"
+          cp scenarios/urban-canyon.json "$input/scenario.json"
+          (
+            cd "$input"
+            {
+              echo '$ sensorproof run scenario.json --output run.json'
+              sensorproof run scenario.json --output run.json
+              echo
+              echo '$ sensorproof verify run.json'
+              sensorproof verify run.json
+              echo
+              echo '$ sensorproof report run.json --output report.html'
+              sensorproof report run.json --output report.html
+            } >sensorproof-cli.txt
+          )
+          python tools/capture_evidence.py prepare \
+            --root "$GITHUB_WORKSPACE" \
+            --artifact "$input/run.json" \
+            --report "$input/report.html" \
+            --cli "$input/sensorproof-cli.txt" \
+            --output-root "$RUNNER_TEMP/sensorproof-evidence"
+      - name: Set up exact evidence wheel downloader
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v6.2.0
+        with:
+          python-version: "3.12.3"
+      - name: Download hash-locked browser wheels
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/evidence-wheelhouse"
+          python -m pip download --require-hashes --only-binary=:all: \
+            --dest "$RUNNER_TEMP/evidence-wheelhouse" \
+            -r requirements/evidence-browser.txt
+          test "$(find "$RUNNER_TEMP/evidence-wheelhouse" -maxdepth 1 -type f | wc -l)" -eq 5
+      - name: Regenerate rasters in a networkless pinned browser
+        run: |
+          set -euo pipefail
+          docker pull --platform linux/amd64 "$CONTAINER_IMAGE"
+          test "$(docker image inspect "$CONTAINER_IMAGE" --format '{{.Architecture}}/{{.Os}}')" = "amd64/linux"
+          docker run --rm \
+            --platform linux/amd64 \
+            --pull=never \
+            --network=none \
+            --read-only \
+            --cap-drop=ALL \
+            --security-opt=no-new-privileges \
+            --pids-limit=512 \
+            --memory=4g \
+            --cpus=2 \
+            --shm-size=1g \
+            --tmpfs /tmp:rw,exec,nosuid,nodev,size=2147483648 \
+            --user "$(id -u):$(id -g)" \
+            --env HOME=/tmp/home \
+            --env PYTHONNOUSERSITE=1 \
+            --env PYTHONPATH=/tmp/evidence-python \
+            --volume "$GITHUB_WORKSPACE:/src:ro" \
+            --volume "$RUNNER_TEMP/evidence-wheelhouse:/wheelhouse:ro" \
+            --volume "$RUNNER_TEMP:/out:rw" \
+            --entrypoint bash \
+            "$CONTAINER_IMAGE" \
+            -euo pipefail -c '
+              mkdir -p "$HOME" /tmp/evidence-python
+              python -m pip install --no-index --find-links=/wheelhouse --target=/tmp/evidence-python Pillow==12.3.0 playwright==1.62.0
+              python /src/tools/capture_evidence.py capture --output-root /out/sensorproof-evidence --container-image "'"$CONTAINER_IMAGE"'"
+              python /src/tools/capture_evidence.py verify-visuals --output-root /out/sensorproof-evidence
+            '
+      - name: Restore exact experiment runtime
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.14.6"
+      - name: Finalize, replay, and compare every byte
+        run: |
+          set -euo pipefail
+          candidate="$RUNNER_TEMP/sensorproof-evidence"
+          python tools/capture_evidence.py finalize \
+            --root "$GITHUB_WORKSPACE" \
+            --output-root "$candidate" \
+            --source-revision "$SOURCE_REVISION" \
+            --source-tree "$SOURCE_TREE" \
+            --container-image "$CONTAINER_IMAGE" \
+            --browser "Chromium 151.0.7922.34" \
+            --playwright "1.62.0" \
+            --pillow "12.3.0"
+          python tools/capture_evidence.py verify \
+            --root "$GITHUB_WORKSPACE" \
+            --output-root "$candidate" \
+            --source-revision "$SOURCE_REVISION" \
+            --source-tree "$SOURCE_TREE" \
+            --container-image "$CONTAINER_IMAGE"
+          python tools/capture_evidence.py verify \
+            --root "$GITHUB_WORKSPACE" \
+            --output-root "$GITHUB_WORKSPACE" \
+            --source-revision "$SOURCE_REVISION" \
+            --source-tree "$SOURCE_TREE" \
+            --container-image "$CONTAINER_IMAGE"
+          test "$(find "$candidate/docs/evidence" -type f | wc -l)" -eq 13
+          test "$(find docs/evidence -type f | wc -l)" -eq 13
+          while IFS= read -r relative; do
+            cmp "$candidate/$relative" "$GITHUB_WORKSPACE/$relative"
+          done <<'FILES'
+          docs/evidence/architecture.svg
+          docs/evidence/certificate-chain.svg
+          docs/evidence/fault-isolation.svg
+          docs/evidence/sensorproof-cli.png
+          docs/evidence/sensorproof-cli.txt
+          docs/evidence/sensorproof-demo.gif
+          docs/evidence/sensorproof-evidence.json
+          docs/evidence/sensorproof-report-full.png
+          docs/evidence/sensorproof-report-mobile.png
+          docs/evidence/sensorproof-report.html
+          docs/evidence/sensorproof-report.png
+          docs/evidence/sensorproof-run.json
+          docs/evidence/trajectory.svg
+          FILES
+          git diff --check
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"

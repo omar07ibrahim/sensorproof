@@ -41,6 +41,7 @@ jobs:
           python -m ruff check .
           python -m ruff format --check .
           python -m mypy
+          python tools/capture_evidence.py --help >/dev/null
           python -m pytest -q --cov=sensorproof --cov-report=term-missing --cov-fail-under=90
           git diff --check
           test -z "$(git status --porcelain=v1 --untracked-files=all)"
