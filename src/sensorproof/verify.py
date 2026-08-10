@@ -115,8 +115,12 @@ def _replay(
             f"decision count mismatch at step {step}",
         )
         for observation, decision in zip(frame_observations, decisions, strict=True):
-            sensor_id = observation.get("sensor")
-            _require(sensor_id in sensors, f"unknown sensor at step {step}")
+            sensor_id_value = observation.get("sensor")
+            _require(
+                isinstance(sensor_id_value, str) and sensor_id_value in sensors,
+                f"unknown sensor at step {step}",
+            )
+            sensor_id = cast(str, sensor_id_value)
             sensor = sensors[sensor_id]
             _require(decision.get("sensor") == sensor_id, f"sensor mismatch at step {step}")
             _require(decision.get("kind") == sensor.kind, f"kind mismatch at step {step}")
@@ -126,13 +130,14 @@ def _replay(
             )
             _require(decision.get("before") == state, f"before-state mismatch at step {step}")
             indexes = (0, 1) if sensor.kind == "position" else (2, 3)
-            values = observation.get("values")
+            values_value = observation.get("values")
             _require(
-                isinstance(values, list)
-                and len(values) == 2
-                and all(type(value) is int for value in values),
+                isinstance(values_value, list)
+                and len(values_value) == 2
+                and all(type(value) is int for value in values_value),
                 f"invalid observation values at step {step}",
             )
+            values = cast(list[int], values_value)
             residual = [values[axis] - state[indexes[axis]] for axis in range(2)]
             residual_sq = sum(value * value for value in residual)
             gate_radius = round_div(sensor.noise_units * sensor.gate_sigma_milli, 1_000)
