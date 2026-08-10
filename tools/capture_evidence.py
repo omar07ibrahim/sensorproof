@@ -217,8 +217,8 @@ def capture(output_root: Path, container_image: str) -> None:
                     }),
             })"""
         )
-        if overflow["scrollWidth"] > overflow["viewport"]:
-            raise ValueError(f"mobile report has horizontal overflow: {overflow}")
+        if overflow["offenders"]:
+            raise ValueError(f"mobile report has visible horizontal overflow: {overflow}")
         mobile.screenshot(path=evidence / "sensorproof-report-mobile.png", animations="disabled")
         mobile.close()
 
