@@ -38,13 +38,20 @@ def test_tampering_is_detected(scenario: Scenario, mutation: str) -> None:
     elif mutation == "residual":
         artifact["runs"]["robust"]["trace"][0]["decisions"][0]["residual"][0] += 1
     elif mutation == "decision":
-        artifact["runs"]["robust"]["trace"][40]["decisions"][2]["status"] = "accepted"
+        decision = next(
+            item
+            for frame in artifact["runs"]["robust"]["trace"]
+            for item in frame["decisions"]
+            if item["status"] != "accepted"
+        )
+        decision["status"] = "accepted"
     elif mutation == "summary":
         artifact["runs"]["robust"]["summary"]["position_rmse_mm"] += 1
     elif mutation == "certificate":
         artifact["certificate"]["payload_sha256"] = "0" * 64
     else:
-        artifact["comparison"]["winner"] = "baseline"
+        winner = artifact["comparison"]["winner"]
+        artifact["comparison"]["winner"] = "baseline" if winner == "robust" else "robust"
     with pytest.raises(ArtifactError):
         verify_artifact(artifact)
 

@@ -67,7 +67,7 @@
       "sensor": "gnss",
       "start": 34,
       "end": 72,
-      "type": "bias_ramp",
+      "type": "bias_step",
       "bias_x": 16000,
       "bias_y": -11000
     }
