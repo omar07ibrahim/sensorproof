@@ -17,7 +17,7 @@
       "bytes": 8292,
       "media_type": "image/svg+xml",
       "path": "docs/evidence/fault-isolation.svg",
-      "sha256": "856463151e38d4eb17648caeb28b563f7585e0cd5d7d8583cc3e785cd4e49b4f"
+      "sha256": "31225b2704446d40a75d5efa1033978d280674d4dd67c486ffa325647a471226"
     },
     {
       "bytes": 68293,
@@ -134,8 +134,8 @@
     "steps": 96
   },
   "scenario_sha256": "fc2530ebf9c3efb435be1dd3781293b920deb9c16fa3b1c5f45fa4ff4d869e62",
-  "source_revision": "cc091ac9f2e64f41ea17e2e726264f3f0aa8b306",
-  "source_tree": "1e780419b59e39fc25a00522ab8c718322bddd94",
+  "source_revision": "f66a6e6fa7127ef696f51994f0a69ed08438c224",
+  "source_tree": "c1a2c47316b022b93fb47ca210932b74512b513e",
   "sources": [
     {
       "bytes": 7561,
@@ -173,9 +173,9 @@
       "sha256": "1c772775d20eac5e6cdfb269c165c1687ceaae59782f9d5de3a168cff9c31cd4"
     },
     {
-      "bytes": 31158,
+      "bytes": 31232,
       "path": "tools/capture_evidence.py",
-      "sha256": "1dc08046715f806e02be122fb7fba1f564f76cfe32d655cf9e0485026e0435f2"
+      "sha256": "676dcddf2af37d02974ca16478cfe1f1b24c63a265554755ee3cc5ed5c911fb4"
     },
     {
       "bytes": 70,
