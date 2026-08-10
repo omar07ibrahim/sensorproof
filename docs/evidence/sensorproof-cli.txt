@@ -1,0 +1,24 @@
+$ sensorproof run scenario.json --output run.json
+SensorProof run complete
+  scenario: Urban canyon GNSS bias
+  fixed-point steps: 96
+  observations: 288
+  robust position RMSE: 160 mm
+  ungated baseline RMSE: 8792 mm
+  RMSE reduction: 98.18%
+  isolated fault observations: 38
+  certificate: sha256:0647004d9bcb5e09f685f218980c9a62c1d8bdb97ea409252e24a44144d24870
+  artifact: run.json
+
+$ sensorproof verify run.json
+SensorProof certificate verified
+  steps replayed: 96
+  observations replayed: 288
+  robust position RMSE: 160 mm
+  ungated baseline RMSE: 8792 mm
+  payload: sha256:0647004d9bcb5e09f685f218980c9a62c1d8bdb97ea409252e24a44144d24870
+
+$ sensorproof report run.json --output report.html
+SensorProof report written
+  report: report.html
+  network dependencies: none

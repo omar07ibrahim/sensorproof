@@ -1,0 +1,236 @@
+{
+  "certificate_sha256": "0647004d9bcb5e09f685f218980c9a62c1d8bdb97ea409252e24a44144d24870",
+  "files": [
+    {
+      "bytes": 3042,
+      "media_type": "image/svg+xml",
+      "path": "docs/evidence/architecture.svg",
+      "sha256": "0e10059b8e9b3667d92616d84e9f7986cd39d1e0c5edd84455e4ca4f10a7190e"
+    },
+    {
+      "bytes": 2345,
+      "media_type": "image/svg+xml",
+      "path": "docs/evidence/certificate-chain.svg",
+      "sha256": "ded8493bb9bc6ee018a4df8e2ca9dd10e8f2b2051de5f30eb660f3a0765a5286"
+    },
+    {
+      "bytes": 8292,
+      "media_type": "image/svg+xml",
+      "path": "docs/evidence/fault-isolation.svg",
+      "sha256": "856463151e38d4eb17648caeb28b563f7585e0cd5d7d8583cc3e785cd4e49b4f"
+    },
+    {
+      "bytes": 68293,
+      "dimensions": [
+        1180,
+        650
+      ],
+      "media_type": "image/png",
+      "path": "docs/evidence/sensorproof-cli.png",
+      "sha256": "1118802be6cb135109ee946157c7524e4165d14a246cc1f7dd9e3b6a8671611d"
+    },
+    {
+      "bytes": 776,
+      "media_type": "text/plain",
+      "path": "docs/evidence/sensorproof-cli.txt",
+      "sha256": "1365d9159aeb4e21ccf00855c28d2fc95760496d765d75a03c2fcde6e12ffbdd"
+    },
+    {
+      "bytes": 120686,
+      "dimensions": [
+        1120,
+        820
+      ],
+      "frames": 3,
+      "media_type": "image/gif",
+      "path": "docs/evidence/sensorproof-demo.gif",
+      "sha256": "a030062537db659e0bf0bfb5e1d1c20d49457e739e61412f6a7b141342b59acf"
+    },
+    {
+      "bytes": 420600,
+      "dimensions": [
+        1440,
+        3998
+      ],
+      "media_type": "image/png",
+      "path": "docs/evidence/sensorproof-report-full.png",
+      "sha256": "2d9605ff9edff86b60772ce21fab2d84983dfd77908b51dff5c857a777eff355"
+    },
+    {
+      "bytes": 60167,
+      "dimensions": [
+        390,
+        844
+      ],
+      "media_type": "image/png",
+      "path": "docs/evidence/sensorproof-report-mobile.png",
+      "sha256": "1d630da2704e7c8a9461620d3305a8a5c2cf8049fffe2b83b9d75b322d65ca19"
+    },
+    {
+      "bytes": 21815,
+      "media_type": "text/html",
+      "path": "docs/evidence/sensorproof-report.html",
+      "sha256": "4f637a61e68fd9349e6072853d56cbf77c8324c9dcd29b4c53476457f8a50c43"
+    },
+    {
+      "bytes": 113095,
+      "dimensions": [
+        1440,
+        1000
+      ],
+      "media_type": "image/png",
+      "path": "docs/evidence/sensorproof-report.png",
+      "sha256": "3e20e304a0fb6f46579aae0c28d0e8fd982e85cc38dddc078f7aeaa9e7bfb1cc"
+    },
+    {
+      "bytes": 576786,
+      "media_type": "application/json",
+      "path": "docs/evidence/sensorproof-run.json",
+      "sha256": "77f1b9810e6cbcc63249e1cfce2c9eb3466a9c43f7077a1948f285c0027b839c"
+    },
+    {
+      "bytes": 4832,
+      "media_type": "image/svg+xml",
+      "path": "docs/evidence/trajectory.svg",
+      "sha256": "3b6fb6c89cff35de6ecf4381c7653c7c90d984517db07d9b33eca94d3a2339c7"
+    }
+  ],
+  "format": "sensorproof.evidence.v1",
+  "generation": {
+    "browser": "Chromium 151.0.7922.34",
+    "container_image": "mcr.microsoft.com/playwright/python@sha256:51d31fdfacb0cff99a1a724152e34ae408d2bd4e7da310ff157450f49261cc59",
+    "implementation": "CPython",
+    "network": "disabled during browser capture",
+    "pillow": "12.3.0",
+    "platform": "linux/amd64",
+    "playwright": "1.62.0",
+    "python": "3.14.6",
+    "viewports": {
+      "demo": [
+        1120,
+        820
+      ],
+      "desktop": [
+        1440,
+        1000
+      ],
+      "mobile": [
+        390,
+        844
+      ],
+      "terminal": [
+        1180,
+        650
+      ]
+    }
+  },
+  "result": {
+    "baseline_position_rmse_mm": 8792,
+    "healthy_rejections": 2,
+    "isolated_fault_observations": 38,
+    "observations": 288,
+    "rmse_reduction_basis_points": 9818,
+    "robust_position_rmse_mm": 160,
+    "steps": 96
+  },
+  "scenario_sha256": "fc2530ebf9c3efb435be1dd3781293b920deb9c16fa3b1c5f45fa4ff4d869e62",
+  "source_revision": "cc091ac9f2e64f41ea17e2e726264f3f0aa8b306",
+  "source_tree": "1e780419b59e39fc25a00522ab8c718322bddd94",
+  "sources": [
+    {
+      "bytes": 7561,
+      "path": ".github/workflows/evidence.yml",
+      "sha256": "576c4c02ced399cd025cc1e1cd354499a145eb4e1484b1f99dc1aeada69de697"
+    },
+    {
+      "bytes": 1780,
+      "path": "pyproject.toml",
+      "sha256": "a4766f85d9e0d73ef6b0ef42a1889c6531e3a2fed7a5d6fc3c7eac0a0926bbe1"
+    },
+    {
+      "bytes": 394,
+      "path": "requirements/evidence-browser-image.lock.json",
+      "sha256": "1ba302dec7680863dcc3340ea8a129413c738c66b7f8bb0a4d95421bcf9e4c0f"
+    },
+    {
+      "bytes": 693,
+      "path": "requirements/evidence-browser.txt",
+      "sha256": "bdf23c0da87e7bd3d2e2a1b8a6df6b2dff1269fafc605eabf452ea26288941ea"
+    },
+    {
+      "bytes": 55,
+      "path": "requirements/runtime.in",
+      "sha256": "7ae4ae9d041d2eb74e2d1d60d9ca7e791446e517aa08cbf53f2712b9091272b7"
+    },
+    {
+      "bytes": 57,
+      "path": "requirements/runtime.txt",
+      "sha256": "3f666688fc7b7d4b1392692a0bc307ca39c3d3f2dc11c4bdcbd30eec5eabd924"
+    },
+    {
+      "bytes": 1271,
+      "path": "scenarios/urban-canyon.json",
+      "sha256": "1c772775d20eac5e6cdfb269c165c1687ceaae59782f9d5de3a168cff9c31cd4"
+    },
+    {
+      "bytes": 31158,
+      "path": "tools/capture_evidence.py",
+      "sha256": "1dc08046715f806e02be122fb7fba1f564f76cfe32d655cf9e0485026e0435f2"
+    },
+    {
+      "bytes": 70,
+      "path": "src/sensorproof/__init__.py",
+      "sha256": "2dc5d1e8d648b8ad19ac0763840b26beb5c37f32e5303670b23566ad68780c6f"
+    },
+    {
+      "bytes": 95,
+      "path": "src/sensorproof/__main__.py",
+      "sha256": "f2c1c318d8852ec6bf62e3e0e159f5ae17f36218a5998e8ea82e9d432661d7bf"
+    },
+    {
+      "bytes": 3533,
+      "path": "src/sensorproof/artifact.py",
+      "sha256": "14527681596ebebaf1476242894906730cdf96b505099991a3d5398370ab7428"
+    },
+    {
+      "bytes": 4535,
+      "path": "src/sensorproof/cli.py",
+      "sha256": "5cfce0a9aaed1f854cb28605cb16cd1b3c9858f5b29e9b581392e3355d53f762"
+    },
+    {
+      "bytes": 6480,
+      "path": "src/sensorproof/engine.py",
+      "sha256": "8cb5d578a66534b21ff0713a7410e4b503420a7011adf7542bc69df40853ba71"
+    },
+    {
+      "bytes": 1753,
+      "path": "src/sensorproof/fixed.py",
+      "sha256": "39b3027131bbade01de6d9d564374ff15ee9aa05b28f7beeb03cffc0023232e4"
+    },
+    {
+      "bytes": 10411,
+      "path": "src/sensorproof/report.py",
+      "sha256": "6f5f1490e11f903d55f11fb5dc922d69b98786204ca1c9e04ecd8a28e29f3843"
+    },
+    {
+      "bytes": 10792,
+      "path": "src/sensorproof/schema.py",
+      "sha256": "4413023551051f737b24af233527ae7c0e751eff7f648e3c62bfa84c90802512"
+    },
+    {
+      "bytes": 2812,
+      "path": "src/sensorproof/simulate.py",
+      "sha256": "f4c425d116c7c55395b71b730f2a159e74bb5b0c87e35a7fef2d7105e4c78d72"
+    },
+    {
+      "bytes": 12377,
+      "path": "src/sensorproof/verify.py",
+      "sha256": "7c8b823f3b540e36ee3765145b230a88ffa76d7205ee51a3abe8388a68b8c418"
+    },
+    {
+      "bytes": 0,
+      "path": "src/sensorproof/py.typed",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}
