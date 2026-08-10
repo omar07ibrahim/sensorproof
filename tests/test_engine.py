@@ -30,10 +30,14 @@ def test_robust_run_beats_identical_ungated_baseline(scenario: Scenario) -> None
     artifact = run_experiment(scenario)
     robust = artifact["runs"]["robust"]["summary"]
     baseline = artifact["runs"]["baseline"]["summary"]
-    assert artifact["comparison"]["winner"] == "robust"
-    assert robust["position_rmse_mm"] < baseline["position_rmse_mm"]
-    assert robust["isolated_fault_observations"] > 20
-    assert robust["healthy_rejections"] <= 4
+    assert artifact["comparison"] == {
+        "rmse_reduction_basis_points": 9818,
+        "winner": "robust",
+    }
+    assert robust["position_rmse_mm"] == 160
+    assert baseline["position_rmse_mm"] == 8792
+    assert robust["isolated_fault_observations"] == 38
+    assert robust["healthy_rejections"] == 2
     assert baseline["rejected_observations"] == 0
     assert baseline["quarantined_observations"] == 0
 
